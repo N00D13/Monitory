@@ -13,6 +13,8 @@ namespace Monitory.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        #region Getters
+
         public IActionResult Index()
         {
             return View();
@@ -42,5 +44,7 @@ namespace Monitory.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        #endregion
     }
 }

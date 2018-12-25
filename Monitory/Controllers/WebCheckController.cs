@@ -15,12 +15,16 @@ namespace Monitory.Controllers
     [Authorize]
     public class WebCheckController : Controller
     {
+        #region Properties
         private readonly MonitoryContext _context;
 
         public WebCheckController(MonitoryContext context)
         {
             _context = context;
         }
+        #endregion
+
+        #region Getters
 
         // GET: WebCheck
         public async Task<IActionResult> Index()
@@ -55,6 +59,46 @@ namespace Monitory.Controllers
             return View();
         }
 
+        // GET: WebCheck/Edit/5
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var webCheck = await _context.WebChecks.FindAsync(id);
+            if (webCheck == null)
+            {
+                return NotFound();
+            }
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "Password", webCheck.AccountID);
+            return View(webCheck);
+        }
+
+        // GET: WebCheck/Delete/5
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var webCheck = await _context.WebChecks
+                .Include(w => w.Account)
+                .FirstOrDefaultAsync(m => m.WebCheckID == id);
+            if (webCheck == null)
+            {
+                return NotFound();
+            }
+
+            return View(webCheck);
+        }
+
+        #endregion
+
+        #region Setters
+
         // POST: WebCheck/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -73,23 +117,6 @@ namespace Monitory.Controllers
                 WebCheckHelper.CreateRecurringEvent(webCheck);
 
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "Password", webCheck.AccountID);
-            return View(webCheck);
-        }
-
-        // GET: WebCheck/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var webCheck = await _context.WebChecks.FindAsync(id);
-            if (webCheck == null)
-            {
-                return NotFound();
             }
             ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "Password", webCheck.AccountID);
             return View(webCheck);
@@ -136,25 +163,6 @@ namespace Monitory.Controllers
             return View(webCheck);
         }
 
-        // GET: WebCheck/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var webCheck = await _context.WebChecks
-                .Include(w => w.Account)
-                .FirstOrDefaultAsync(m => m.WebCheckID == id);
-            if (webCheck == null)
-            {
-                return NotFound();
-            }
-
-            return View(webCheck);
-        }
-
         // POST: WebCheck/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -169,9 +177,15 @@ namespace Monitory.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        #endregion
+
+        #region Helpers
+
         private bool WebCheckExists(Guid id)
         {
             return _context.WebChecks.Any(e => e.WebCheckID == id);
         }
+
+        #endregion
     }
 }
