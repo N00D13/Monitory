@@ -5,6 +5,7 @@ using Hangfire;
 using Hangfire.Dashboard;
 using Monitory.Identity.Helpers;
 using Monitory.Core.Models;
+using Monitory.Core.DBContext;
 
 namespace Monitory.Identity.Filter
 {
@@ -15,15 +16,13 @@ namespace Monitory.Identity.Filter
             var httpContext = context.GetHttpContext();
 
             string username = httpContext.User.Identity.Name;
-            var userRole = AccountHelper.GetCurrentUserRoleAsync(username);
 
-
-            if (userRole.ToString() == "Administrator")
+            if (username == "Alex")
             {
                 return httpContext.User.Identity.IsAuthenticated;
             }
 
-            return httpContext.User.Identity.IsAuthenticated;   
+            return false; 
         }
     }
 

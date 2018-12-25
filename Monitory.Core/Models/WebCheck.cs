@@ -15,6 +15,7 @@ namespace Monitory.Core.Models
         public int Delay { get; set; }
         public DateTime CreateDate { get; set; }
         
+        public Guid AccountID { get; set; }
         public Account Account { get; set; }
     }
 }

@@ -10,8 +10,8 @@ using Monitory.Core.DBContext;
 namespace Monitory.Core.Migrations
 {
     [DbContext(typeof(MonitoryContext))]
-    [Migration("20181225084603_AddTaskModel")]
-    partial class AddTaskModel
+    [Migration("20181225101755_initMigration")]
+    partial class initMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,6 +58,39 @@ namespace Monitory.Core.Migrations
                         .IsUnique();
 
                     b.ToTable("Task");
+                });
+
+            modelBuilder.Entity("Monitory.Core.Models.WebCheck", b =>
+                {
+                    b.Property<Guid>("WebCheckID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("AccountID");
+
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<int>("Delay");
+
+                    b.Property<string>("Domain");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("WebCheckID");
+
+                    b.HasIndex("AccountID");
+
+                    b.HasIndex("WebCheckID")
+                        .IsUnique();
+
+                    b.ToTable("WebCheck");
+                });
+
+            modelBuilder.Entity("Monitory.Core.Models.WebCheck", b =>
+                {
+                    b.HasOne("Monitory.Core.Models.Account", "Account")
+                        .WithMany("WebChecks")
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

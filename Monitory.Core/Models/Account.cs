@@ -27,7 +27,7 @@ namespace Monitory.Core.Models
 
         public string Role { get; set; }
 
-        public ICollection<WebCheck> WebCheck { get; set; }
+        public ICollection<WebCheck> WebChecks { get; set; }
         
     }
 }

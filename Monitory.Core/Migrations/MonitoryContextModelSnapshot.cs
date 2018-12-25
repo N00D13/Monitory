@@ -63,7 +63,7 @@ namespace Monitory.Core.Migrations
                     b.Property<Guid>("WebCheckID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("AccountID");
+                    b.Property<Guid>("AccountID");
 
                     b.Property<DateTime>("CreateDate");
 
@@ -86,8 +86,9 @@ namespace Monitory.Core.Migrations
             modelBuilder.Entity("Monitory.Core.Models.WebCheck", b =>
                 {
                     b.HasOne("Monitory.Core.Models.Account", "Account")
-                        .WithMany("WebCheck")
-                        .HasForeignKey("AccountID");
+                        .WithMany("WebChecks")
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

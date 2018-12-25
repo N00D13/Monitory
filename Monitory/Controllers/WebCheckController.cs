@@ -25,7 +25,8 @@ namespace Monitory.Controllers
         // GET: WebCheck
         public async Task<IActionResult> Index()
         {
-            return View(await _context.WebChecks.ToListAsync());
+            var monitoryContext = _context.WebChecks.Include(w => w.Account);
+            return View(await monitoryContext.ToListAsync());
         }
 
         // GET: WebCheck/Details/5
@@ -37,6 +38,7 @@ namespace Monitory.Controllers
             }
 
             var webCheck = await _context.WebChecks
+                .Include(w => w.Account)
                 .FirstOrDefaultAsync(m => m.WebCheckID == id);
             if (webCheck == null)
             {
@@ -49,6 +51,7 @@ namespace Monitory.Controllers
         // GET: WebCheck/Create
         public IActionResult Create()
         {
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "Password");
             return View();
         }
 
@@ -57,7 +60,7 @@ namespace Monitory.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WebCheckID,Name,Domain,Delay,CreateDate")] WebCheck webCheck)
+        public async Task<IActionResult> Create([Bind("WebCheckID,Name,Domain,Delay,CreateDate,AccountID")] WebCheck webCheck)
         {
             if (ModelState.IsValid)
             {
@@ -71,6 +74,7 @@ namespace Monitory.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "Password", webCheck.AccountID);
             return View(webCheck);
         }
 
@@ -87,6 +91,7 @@ namespace Monitory.Controllers
             {
                 return NotFound();
             }
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "Password", webCheck.AccountID);
             return View(webCheck);
         }
 
@@ -95,7 +100,7 @@ namespace Monitory.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("WebCheckID,Name,Domain,Delay,CreateDate")] WebCheck webCheck)
+        public async Task<IActionResult> Edit(Guid id, [Bind("WebCheckID,Name,Domain,Delay,CreateDate,AccountID")] WebCheck webCheck)
         {
             if (id != webCheck.WebCheckID)
             {
@@ -106,11 +111,12 @@ namespace Monitory.Controllers
             {
                 try
                 {
-                    // Set new DateTime
+                    // Set DateTime new
                     webCheck.CreateDate = DateTime.Now;
 
                     _context.Update(webCheck);
                     await _context.SaveChangesAsync();
+
                     WebCheckHelper.UpdateRecurringEvent(webCheck);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -126,6 +132,7 @@ namespace Monitory.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AccountID"] = new SelectList(_context.Accounts, "AccountID", "Password", webCheck.AccountID);
             return View(webCheck);
         }
 
@@ -138,6 +145,7 @@ namespace Monitory.Controllers
             }
 
             var webCheck = await _context.WebChecks
+                .Include(w => w.Account)
                 .FirstOrDefaultAsync(m => m.WebCheckID == id);
             if (webCheck == null)
             {
