@@ -1,0 +1,18 @@
+﻿@model Monitory.Core.Models.Account
+@{
+    ViewData["Title"] = "Login";
+}
+<div class="row">
+    <div class="container">
+        @using (Html.BeginForm())
+        {
+            <div class="col-lg-12">
+                <fieldset>
+                    <input type="text" placeholder="Username" name="Username" />
+                    <input type="password" placeholder="Password" name="Password" />
+                    <input type="submit" value="Submit" />
+                </fieldset>
+            </div>
+        }
+    </div>
+</div>
