@@ -11,10 +11,13 @@ using Microsoft.EntityFrameworkCore;
 using Monitory.Core.DBContext;
 using Monitory.Identity.Helpers;
 using Monitory.Core.Models;
+using Monitory.Identity.Filter;
+using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace Monitory.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     public class AccountController : Controller
     {
         #region Properties
@@ -170,6 +173,21 @@ namespace Monitory.Controllers
         private bool AccountExists(Guid id)
         {
             return _context.Accounts.Any(e => e.AccountID == id);
+        }
+
+        public async Task<Account> UserAccountAsync(MonitoryContext context, HttpContext httpContext)
+        {
+            try
+            {
+                string username = httpContext.User.Identity.Name;
+                var user = await context.Accounts.FirstOrDefaultAsync(u => u.Username == username);
+                return user;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception: " + e);
+                return null;
+            }
         }
         #endregion
     }

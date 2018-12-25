@@ -40,18 +40,17 @@ namespace Monitory.Controllers
         {
             if (await LoginUserAsync(account.Username, account.Password))
             {
+                string userRole = await GetUserRoleAsync(account.Username);
+
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, account.Username)
+                    new Claim(ClaimTypes.Name, account.Username),
+                    new Claim(ClaimTypes.Role, userRole)
                 };
 
                 var userIdentity = new ClaimsIdentity(claims, "login");
 
                 ClaimsPrincipal principal = new ClaimsPrincipal(userIdentity);
-
-                // Get User Role
-                string userRole = await GetUserRoleAsync(account.Username);
-                principal.IsInRole(userRole);
 
                 await HttpContext.SignInAsync(principal);
 
