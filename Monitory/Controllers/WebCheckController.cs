@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Monitory.Core.DBContext;
 using Monitory.Core.Models;
 using Monitory.Tasks.Checks;
+using Monitory.Tasks.Filters;
 
 namespace Monitory.Controllers
 {
@@ -22,6 +23,7 @@ namespace Monitory.Controllers
         {
             _context = context;
         }
+
         #endregion
 
         #region Getters
@@ -30,7 +32,17 @@ namespace Monitory.Controllers
         public async Task<IActionResult> Index()
         {
             var monitoryContext = _context.WebChecks.Include(w => w.Account);
-            return View(await monitoryContext.ToListAsync());
+
+            var checkList = await monitoryContext.ToListAsync();
+
+            // User Filter
+            var userAccount = GetUserAccountAsync();
+            if(userAccount != null)
+            {
+                checkList = checkList.Where(c => c.Account.Username == userAccount.Result.Username).ToList();
+            }
+
+            return View(checkList);
         }
 
         // GET: WebCheck/Details/5
@@ -108,8 +120,10 @@ namespace Monitory.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userAccount = GetUserAccountAsync().Result;
                 webCheck.WebCheckID = Guid.NewGuid();
                 webCheck.CreateDate = DateTime.Now;
+                webCheck.AccountID = userAccount.AccountID;
 
                 _context.Add(webCheck);
                 await _context.SaveChangesAsync();
@@ -184,6 +198,19 @@ namespace Monitory.Controllers
         private bool WebCheckExists(Guid id)
         {
             return _context.WebChecks.Any(e => e.WebCheckID == id);
+        }
+
+        private async Task<Account> GetUserAccountAsync()
+        {
+            var identityUser = HttpContext.User.Identity;
+
+            Account usr = await _context.Accounts.FirstOrDefaultAsync(a => a.Username == identityUser.Name);
+
+            if(usr != null)
+            {
+                return usr;
+            }
+            return null;
         }
 
         #endregion

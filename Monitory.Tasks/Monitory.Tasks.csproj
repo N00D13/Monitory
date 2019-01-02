@@ -8,8 +8,4 @@
     <ProjectReference Include="..\Monitory.Core\Monitory.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>

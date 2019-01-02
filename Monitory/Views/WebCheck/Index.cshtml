@@ -25,7 +25,7 @@
                 @Html.DisplayNameFor(model => model.CreateDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Account)
+                @Html.DisplayNameFor(model => model.Account.Username)
             </th>
             <th></th>
         </tr>
@@ -46,7 +46,7 @@
                 @Html.DisplayFor(modelItem => item.CreateDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Account.Password)
+                @Html.DisplayFor(modelItem => item.Account.Username)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.WebCheckID">Edit</a> |
